@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -84,29 +84,63 @@
     </script>
 </head>
 <body>
-    <h1>LLM06: Excessive Agency</h1>
-    <p>Interact with an LLM-powered chatbot integrated with a file management system. The system includes both public and restricted folders, with the latter accessible only to users with admin privileges.</p>
-    <p></p>
-    <p>Goal: Discover the vulnerability and manipulate the chatbot to access flag.txt, which is restricted to admin-only access.</p>
-    <div class="chat-container">
-        <h2 class="chat-header">PromptMe</h2>
-        <div class="chat-box" id="chat-box"></div>
-        <div id='typing' class='typing-message bot-message typing' style="display: none;">
-            🤖 AI is thinking<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>
+    <main class="page-shell">
+        <header class="challenge-header">
+            <div class="status-line">
+                <span class="status-dot" aria-hidden="true"></span>
+                Training environment online
+            </div>
+            <p class="challenge-code">OWASP // LLM06</p>
+            <h1>Excessive Agency</h1>
+            <p class="challenge-summary">Interact with an LLM-powered chatbot connected to a file management system. Public files are available to users; restricted files require admin privileges.</p>
+        </header>
+
+        <section class="goal-panel" aria-labelledby="goal-title">
+            <div class="goal-marker" aria-hidden="true">01</div>
+            <div>
+                <p class="goal-label">Target objective</p>
+                <h2 id="goal-title">Retrieve <code>flag.txt</code></h2>
+                <p>Discover the vulnerability and manipulate the chatbot to access the admin-only file.</p>
+            </div>
+        </section>
+
+        <div class="workspace-grid">
+            <section class="chat-container" aria-labelledby="chat-title">
+                <div class="panel-header">
+                    <div>
+                        <span class="panel-kicker">AI interface</span>
+                        <h2 id="chat-title" class="chat-header">PromptMe</h2>
+                    </div>
+                    <span class="connection-status">Connected</span>
+                </div>
+                <div class="chat-box" id="chat-box">
+                    <div class="system-message">Secure channel initialized. Awaiting operator input<span class="cursor" aria-hidden="true"></span></div>
+                </div>
+                <div id='typing' class='typing-message bot-message typing' style="display: none;">
+                    AI is processing<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>
+                </div>
+                <div class="input-container">
+                    <label class="sr-only" for="user-input">Message</label>
+                    <span class="prompt-symbol" aria-hidden="true">&gt;_</span>
+                    <input type="text" id="user-input" placeholder="Enter command or prompt..." autocomplete="off" onkeydown="handleUserInputKeydown(event)">
+                    <button onclick="sendMessage()">Transmit</button>
+                </div>
+            </section>
+
+            <section class="flag-container" aria-labelledby="flag-title">
+                <div class="flag-icon" aria-hidden="true">{ }</div>
+                <p class="panel-kicker">Validation terminal</p>
+                <h2 id="flag-title" class="flag-header">Submit the flag</h2>
+                <p class="flag-hint">Enter the exact contents recovered from <code>flag.txt</code>.</p>
+                <div class="input-container">
+                    <label class="sr-only" for="flag-input">Flag value</label>
+                    <input type="text" id="flag-input" placeholder="FLAG{...}" autocomplete="off" onkeydown="handleFlagInputKeydown(event)">
+                    <button onclick="submitFlag()">Verify</button>
+                </div>
+                <div id="flag-wait" class="flag-result" style="display: none;">Validating...</div>
+                <div id="flag-result" class="flag-result" aria-live="polite"></div>
+            </section>
         </div>
-        <div class="input-container">
-            <input type="text" id="user-input" placeholder="Type your message..." onkeydown="handleUserInputKeydown(event)">
-            <button onclick="sendMessage()">Send</button>
-        </div>
-    </div>
-    <div class="flag-container">
-        <h2 class="flag-header">Submit content of flag.txt</h2>
-        <div class="input-container">
-            <input type="text" id="flag-input" placeholder="Enter the flag..." onkeydown="handleFlagInputKeydown(event)">
-            <button onclick="submitFlag()">Submit</button>
-        </div>
-        <div id="flag-wait" class="flag-result" style="display: none;">⏳ Processing...</div>
-        <div id="flag-result" class="flag-result"></div>
-    </div>
+    </main>
 </body>
 </html>
