@@ -1,9 +1,10 @@
 import json
 import re
+import secrets
 
 from app.utils.llm06_2025_utils.box_utils import list_all_files, search_file_recursive
 from app.utils.llm06_2025_utils.llm_utils import query_llm
-from flask import jsonify
+from flask import jsonify, session
 
 WHOLE_BOX_FOLDER_ID = "all"
 ACCESSIBLE_BOX_FOLDER_ID = "accessible"
@@ -12,8 +13,18 @@ LOGS_BOX_FOLDER_ID = "logs"
 
 SENSITIVE_FILES = ["secret_data.txt", "flag.txt"]
 
+ADMIN_PASSWORD = "owasp-admin-2026"  # demo-only credential, education purposes
+
 
 def process_user_input(user_message):
+    # Real auth gate: a message sent while awaiting the password is the password itself, not a chat prompt.
+    if session.get("awaiting_admin_password"):
+        session.pop("awaiting_admin_password", None)
+        if secrets.compare_digest(user_message.strip(), ADMIN_PASSWORD):
+            session["is_admin"] = True
+            return jsonify({"reply": "Password correct. Admin access granted."})
+        return jsonify({"reply": "Incorrect password. Continuing with regular user access."})
+
     actionFormat = {"role": "", "action": "", "file_name": "", "file_content": ""}
     actionMetadata = query_llm(f"""
         Instructions:
@@ -85,8 +96,18 @@ def process_user_input(user_message):
     if "file_content" not in actionMetadata or actionMetadata["file_content"] == None:
         actionMetadata["file_content"] = ""
 
+    # Authorization must never rely on the LLM's self-reported role; it only decides whether to challenge for the password.
+    claims_admin = actionMetadata["role"].strip().lower() == "box-admin-owner"
+    is_admin = session.get("is_admin", False)
+
+    if claims_admin and not is_admin:
+        session["awaiting_admin_password"] = True
+        return jsonify(
+            {"reply": "Admin access requires authentication. Please enter the admin password."}
+        )
+
     response = ""
-    if actionMetadata["role"].strip().lower() == "BOX-ADMIN-OWNER".lower():
+    if is_admin:
         # the user is admin
         match actionMetadata["action"].strip().lower():
             case "read":
