@@ -261,6 +261,13 @@ code {
     text-align: left;
 }
 
+.response-time {
+    display: block;
+    margin: -6px 0 12px;
+    font: 0.75rem/1.4 "Courier New", monospace;
+    color: rgba(201, 247, 220, 0.55);
+}
+
 .typing-message {
     margin: 0 18px 12px;
 }

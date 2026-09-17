@@ -29,7 +29,10 @@
             })
             .then(response => response.json())
             .then(data => {
-                const botMessage = `<pre class='message bot-message'>${data.reply}</pre>`;
+                const timeInfo = typeof data.processing_time === "number"
+                    ? `<span class="response-time">Replied in ${data.processing_time}s</span>`
+                    : "";
+                const botMessage = `<pre class='message bot-message'>${data.reply}</pre>${timeInfo}`;
                 chatBox.innerHTML += botMessage;
                 chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll
                 typingAnimation.style.display = 'none';

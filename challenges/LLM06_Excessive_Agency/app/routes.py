@@ -1,3 +1,5 @@
+import time
+
 from flask import request, render_template, jsonify
 from app import app
 from app.utils.llm06_2025_utils.llm06_2025_service import process_user_input
@@ -12,7 +14,13 @@ def home():
 def chat():
     data = request.json
     user_message = data.get('message', '')
-    return process_user_input(user_message)
+    start_time = time.perf_counter()
+    response = process_user_input(user_message)
+    elapsed_seconds = time.perf_counter() - start_time
+
+    payload = response.get_json()
+    payload['processing_time'] = round(elapsed_seconds, 2)
+    return jsonify(payload)
 
 
 @app.route('/submit-flag', methods=['POST'])
