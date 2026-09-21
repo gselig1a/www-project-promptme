@@ -139,12 +139,14 @@ def start_challenge_route(challenge_id):
     else:
         return "Unknown Challenge ID", 404
 
+    target_url = f"http://{client_host}:{port}/"
+
     try:
         start_challenge(port, app_path)
-    except RuntimeError as e:
-        return f"<h3>Error: {str(e)}</h3><p>Please stop the existing service manually or choose a different port.</p>", 409
+    except RuntimeError:
+        # Lab is already running, so just send the user to it.
+        return redirect(target_url)
 
-    target_url = f"http://{client_host}:{port}/"
     if wait_until_responsive(target_url):
         return redirect(f"http://{client_host}:{port}/")
     else:
