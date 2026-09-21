@@ -151,12 +151,38 @@ h1 span {
     box-shadow: 0 0 20px rgba(71, 237, 145, 0.11);
 }
 
+.tile--featured {
+    border-color: rgba(255, 200, 87, 0.7);
+    border-top: 3px solid var(--amber);
+    background: linear-gradient(145deg, rgba(255, 200, 87, 0.12), rgba(11, 18, 22, 0.96) 52%);
+    box-shadow: 0 0 28px rgba(255, 200, 87, 0.13);
+}
+
+.tile--featured:hover {
+    border-color: var(--amber);
+    box-shadow: 0 0 30px rgba(255, 200, 87, 0.24);
+}
+
 .tile-topline {
     width: 100%;
     justify-content: space-between;
 }
 
 .risk-number {
+    color: var(--amber);
+}
+
+.selected-status {
+    padding: 3px 5px;
+    border: 1px solid rgba(255, 200, 87, 0.65);
+    color: var(--amber);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.tile--featured .risk-icon {
     color: var(--amber);
 }
 

@@ -30,9 +30,10 @@
       </div>
       <div class="tiles-container">
         {% for risk in risks %}
-          <article class="tile" id="tile-{{ risk.id }}">
+          <article class="tile{% if risk.id == 3 %} tile--featured{% endif %}" id="tile-{{ risk.id }}">
             <div class="tile-topline">
               <span class="risk-number">LLM{{ '%02d'|format(risk.id) }}</span>
+              {% if risk.id == 3 %}<span class="selected-status">Selected</span>{% endif %}
               <span class="running-status" id="status-{{ risk.id }}"><i class="fa-solid fa-circle"></i> Running</span>
             </div>
             <i class="risk-icon {{ risk.icon }}" aria-hidden="true"></i>
