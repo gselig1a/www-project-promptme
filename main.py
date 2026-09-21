@@ -78,16 +78,16 @@ def start_challenge(port, app_path):
 @app.route('/')
 def dashboard():
     risks = [
-        { 'id': 1, 'title': 'Prompt Injection', 'icon': 'fas fa-code' },
-        { 'id': 2, 'title': 'Sensitive Info Disclosure', 'icon': 'fas fa-shield-alt' },
-        { 'id': 3, 'title': 'Supply Chain', 'icon': 'fas fa-shipping-fast' },
-        { 'id': 4, 'title': 'Data & Model Poisoning', 'icon': 'fas fa-skull' },
-        { 'id': 5, 'title': 'Improper Output Handling', 'icon': 'fas fa-exclamation-triangle' },
-        { 'id': 6, 'title': 'Excessive Agency', 'icon': 'fas fa-user-secret' },
-        { 'id': 7, 'title': 'System Prompt Leakage', 'icon': 'fas fa-file-alt' },
-        { 'id': 8, 'title': 'Vector & Embedding Weaknesses','icon': 'fas fa-project-diagram' },
-        { 'id': 9, 'title': 'Misinformation', 'icon': 'fas fa-bullhorn' },
-        { 'id': 10,'title': 'Unbounded Consumption', 'icon': 'fas fa-infinity' }
+        { 'id': 1, 'challenge_id': 1, 'title': 'Prompt Injection', 'icon': 'fas fa-code' },
+        { 'id': 2, 'challenge_id': 2, 'title': 'Sensitive Information Disclosure', 'icon': 'fas fa-shield-alt' },
+        { 'id': 3, 'challenge_id': 6, 'title': 'Excessive Agency', 'icon': 'fas fa-user-secret' },
+        { 'id': 4, 'challenge_id': 3, 'title': 'Supply Chain', 'icon': 'fas fa-shipping-fast' },
+        { 'id': 5, 'challenge_id': 4, 'title': 'Data and Model Poisoning', 'icon': 'fas fa-skull' },
+        { 'id': 6, 'challenge_id': 10, 'title': 'Unbounded Consumption', 'icon': 'fas fa-infinity' },
+        { 'id': 7, 'challenge_id': 9, 'title': 'Misinformation', 'icon': 'fas fa-bullhorn' },
+        { 'id': 8, 'challenge_id': 7, 'title': 'Hidden Context Exposure', 'icon': 'fas fa-eye-slash' },
+        { 'id': 9, 'challenge_id': 8, 'title': 'Vector and Embedding Weaknesses', 'icon': 'fas fa-project-diagram' },
+        { 'id': 10, 'challenge_id': 5, 'title': 'Improper Output Handling', 'icon': 'fas fa-exclamation-triangle' }
     ]
     return render_template('dashboard.html', risks=risks)
 
