@@ -80,7 +80,7 @@ def dashboard():
     risks = [
         { 'id': 1, 'challenge_id': 1, 'title': 'Prompt Injection', 'icon': 'fas fa-code' },
         { 'id': 2, 'challenge_id': 2, 'title': 'Sensitive Information Disclosure', 'icon': 'fas fa-shield-alt' },
-        { 'id': 3, 'challenge_id': 6, 'title': 'Excessive Agency', 'icon': 'fas fa-user-secret' },
+        { 'id': 3, 'challenge_id': 6, 'title': 'Excessive Agency', 'icon': 'fas fa-user-secret', 'mitigated': True },
         { 'id': 4, 'challenge_id': 3, 'title': 'Supply Chain', 'icon': 'fas fa-shipping-fast' },
         { 'id': 5, 'challenge_id': 4, 'title': 'Data and Model Poisoning', 'icon': 'fas fa-skull' },
         { 'id': 6, 'challenge_id': 10, 'title': 'Unbounded Consumption', 'icon': 'fas fa-infinity' },
@@ -139,6 +139,10 @@ def start_challenge_route(challenge_id):
     else:
         return "Unknown Challenge ID", 404
 
+    return launch_and_redirect(client_host, port, app_path, f"Challenge {challenge_id}")
+
+
+def launch_and_redirect(client_host, port, app_path, label):
     target_url = f"http://{client_host}:{port}/"
 
     try:
@@ -148,9 +152,46 @@ def start_challenge_route(challenge_id):
         return redirect(target_url)
 
     if wait_until_responsive(target_url):
-        return redirect(f"http://{client_host}:{port}/")
+        return redirect(target_url)
     else:
-        return f"Challenge {challenge_id} failed to start in time. Check logs.", 500
+        return f"{label} failed to start in time. Check logs.", 500
+
+
+# Hardened versions of challenges, keyed by challenge_id: (port, app_path).
+MITIGATED_CHALLENGES = {
+    6: (5106, "challenges/LLM06_Excessive_Agency/app6_mitigated.py"),
+}
+
+
+@app.route('/start-mitigated/<int:challenge_id>')
+def start_mitigated_challenge_route(challenge_id):
+    if challenge_id not in MITIGATED_CHALLENGES:
+        return "No mitigated version for this challenge", 404
+    port, app_path = MITIGATED_CHALLENGES[challenge_id]
+    client_host = request.host.split(":")[0]
+    return launch_and_redirect(client_host, port, app_path, f"Mitigated challenge {challenge_id}")
+
+
+def stop_port(port):
+    process = running_apps.pop(port, None)
+    if process is None:
+        return False
+    try:
+        process.terminate()
+        process.wait(timeout=5)
+    except (psutil.NoSuchProcess, psutil.TimeoutExpired, subprocess.TimeoutExpired, ProcessLookupError):
+        process.kill()
+    return True
+
+
+@app.route('/stop-mitigated/<int:challenge_id>')
+def stop_mitigated_challenge_route(challenge_id):
+    if challenge_id not in MITIGATED_CHALLENGES:
+        return "No mitigated version for this challenge", 404
+    port, _ = MITIGATED_CHALLENGES[challenge_id]
+    if stop_port(port):
+        return f"Mitigated challenge {challenge_id} stopped."
+    return f"No running mitigated instance for Challenge {challenge_id}."
 
 @app.route('/stop/<int:challenge_id>')
 def stop_challenge_route(challenge_id):

@@ -471,3 +471,68 @@ button:hover {
     }
 }
 
+
+/* Mitigated mode: authenticated session panel */
+.mitigated-tag {
+    color: var(--green);
+}
+
+.session-status {
+    margin: 14px 0 8px;
+    color: var(--green);
+    font-size: 0.78rem;
+}
+
+.session-status::before {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    margin-right: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    content: "";
+}
+
+.session-status.is-admin {
+    color: var(--amber);
+}
+
+.session-panel {
+    padding: 12px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+}
+
+.session-panel .session-status {
+    margin-top: 0;
+}
+
+.session-form {
+    display: flex;
+    gap: 9px;
+}
+
+.session-form[hidden] {
+    display: none;
+}
+
+.secondary-button {
+    border-color: var(--danger);
+    background: transparent;
+    color: var(--danger);
+}
+
+.secondary-button:hover {
+    background: var(--danger);
+    color: #031013;
+}
+
+.login-result {
+    margin: 8px 0 0;
+    color: var(--danger);
+    font-size: 0.78rem;
+}
+
+.login-result:empty {
+    display: none;
+}
