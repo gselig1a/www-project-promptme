@@ -71,6 +71,49 @@
             }, 300);
         }
 
+        // Mitigated mode only: the session role is set by the server, never by the prompt.
+        function renderSession(role) {
+            const status = document.getElementById("session-status");
+            if (!status) return;
+            const isAdmin = role === "admin";
+            status.textContent = isAdmin
+                ? "Session: admin (authenticated)"
+                : "Session: anonymous (least privilege)";
+            status.classList.toggle("is-admin", isAdmin);
+            document.getElementById("login-form").hidden = isAdmin;
+            document.getElementById("logout-form").hidden = !isAdmin;
+        }
+
+        function login(event) {
+            event.preventDefault();
+            const passwordInput = document.getElementById("admin-password");
+            const result = document.getElementById("login-result");
+            result.textContent = "";
+            fetch("/login", {
+                method: "POST",
+                body: JSON.stringify({ password: passwordInput.value }),
+                headers: { "Content-Type": "application/json" }
+            })
+            .then(response => response.json())
+            .then(data => {
+                passwordInput.value = "";
+                renderSession(data.role);
+                if (data.status !== "success") {
+                    result.textContent = "Invalid admin password.";
+                }
+            });
+        }
+
+        function logout(event) {
+            event.preventDefault();
+            fetch("/logout", { method: "POST" })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("login-result").textContent = "";
+                    renderSession(data.role);
+                });
+        }
+
         function handleUserInputKeydown(event) {
             if (event.key === "Enter") {
                 event.preventDefault();
@@ -93,9 +136,26 @@
                 <span class="status-dot" aria-hidden="true"></span>
                 Training environment online
             </div>
-            <p class="challenge-code">OWASP // LLM03</p>
+            <p class="challenge-code">OWASP // LLM03{% if mitigated %} // <span class="mitigated-tag">Mitigated</span>{% endif %}</p>
             <h1>Excessive Agency</h1>
             <p class="challenge-summary">Interact with an LLM-powered chatbot connected to a file management system.</p>
+            {% if mitigated %}
+            <p class="challenge-summary">Public files are available to users; restricted files require admin privileges.</p>
+            <section class="session-panel" aria-labelledby="session-status">
+                <p id="session-status" class="session-status{% if role == 'admin' %} is-admin{% endif %}" aria-live="polite">
+                    {% if role == 'admin' %}Session: admin (authenticated){% else %}Session: anonymous (least privilege){% endif %}
+                </p>
+                <form id="login-form" class="session-form" onsubmit="login(event)"{% if role == 'admin' %} hidden{% endif %}>
+                    <label class="sr-only" for="admin-password">Admin password</label>
+                    <input type="password" id="admin-password" placeholder="Admin password..." autocomplete="current-password" required>
+                    <button type="submit">Log in as admin</button>
+                </form>
+                <form id="logout-form" class="session-form" onsubmit="logout(event)"{% if role != 'admin' %} hidden{% endif %}>
+                    <button type="submit" class="secondary-button">Log out</button>
+                </form>
+                <p id="login-result" class="login-result" aria-live="polite"></p>
+            </section>
+            {% endif %}
         </header>
 
         <section class="goal-panel" aria-labelledby="goal-title">
@@ -103,7 +163,11 @@
             <div>
                 <p class="goal-label">Target objective</p>
                 <h2 id="goal-title">Retrieve the restricted file</h2>
+                {% if mitigated %}
+                <p>Admin rights now come from an authenticated session and the file tool enforces access outside the LLM. Try the same attack: restricted files should stay hidden.</p>
+                {% else %}
                 <p>Discover the vulnerability and manipulate the chatbot to access the file containing the flag.</p>
+                {% endif %}
             </div>
         </section>
 

@@ -264,6 +264,33 @@ h1 span {
     background: var(--danger);
 }
 
+.control-buttons--mitigated {
+    margin-top: 0;
+    padding-top: 8px;
+}
+
+.control-buttons .start-mitigated {
+    display: inline-flex;
+    padding: 10px;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: var(--green);
+    border-color: var(--green);
+    background: transparent;
+}
+
+.control-buttons .start-mitigated:hover {
+    color: #031013;
+    background: var(--green);
+}
+
+.mitigated-status {
+    margin-top: 6px;
+    font-size: 0.68rem;
+}
+
 .control-buttons button:focus-visible {
     outline: 2px solid var(--green);
     outline-offset: 2px;

@@ -46,6 +46,17 @@
                 <i class="fa-solid fa-stop" aria-hidden="true"></i>
               </button>
             </div>
+            {% if risk.mitigated %}
+            <div class="control-buttons control-buttons--mitigated">
+              <button class="start-mitigated" type="button" onclick="startMitigated({{ risk.challenge_id }}, {{ risk.id }})">
+                <i class="fa-solid fa-shield-halved" aria-hidden="true"></i><span>Mitigated</span>
+              </button>
+              <button class="stop" type="button" aria-label="Stop mitigated LLM{{ '%02d'|format(risk.id) }}" onclick="stopMitigated({{ risk.challenge_id }}, {{ risk.id }})">
+                <i class="fa-solid fa-stop" aria-hidden="true"></i>
+              </button>
+            </div>
+            <span class="running-status mitigated-status" id="mitigated-status-{{ risk.id }}"><i class="fa-solid fa-circle"></i> Mitigated running</span>
+            {% endif %}
           </article>
         {% endfor %}
       </div>
@@ -64,6 +75,19 @@
         .then(alert);
 
       document.getElementById(`status-${riskId}`).classList.remove('is-running');
+    }
+
+    function startMitigated(challengeId, riskId) {
+      window.open(`/start-mitigated/${challengeId}`, '_blank');
+      document.getElementById(`mitigated-status-${riskId}`).classList.add('is-running');
+    }
+
+    function stopMitigated(challengeId, riskId) {
+      fetch(`/stop-mitigated/${challengeId}`)
+        .then(response => response.text())
+        .then(alert);
+
+      document.getElementById(`mitigated-status-${riskId}`).classList.remove('is-running');
     }
   </script>
 </body>
